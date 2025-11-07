@@ -32,7 +32,5 @@ FastAPI backend + static frontend for generating recipes using Google's Gemini A
 
 ## Notes
 - The frontend calls the local backend at `http://127.0.0.1:8000` via `scripts/chat.js`.
-- Do not commit your real API key. `.gitignore` excludes `API-Key.env`.
-
 
 
