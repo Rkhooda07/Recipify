@@ -6,6 +6,7 @@
   <title>Recipe Chat - Recipify</title>
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/chat.css">
 </head>
 <body>
   <header class="header">
@@ -25,5 +26,21 @@
       </div>
     </div>
   </header>
+
+  <div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+      <!-- Messages will be inserted here -->
+    </div>
+    <form class="chat-input-row" id="chatForm">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." autocomplete="off" />
+      <button type="submit" class="chat-send-btn">Send</button>
+    </form>
+  </div>
+  
+  <img src="images/pear.png" alt="Green Pear" class="pear-bg" />
+  <img src="images/apple.png" alt="Red Apple" class="apple-bg" />
+  <img src="images/grapes.png" alt="Grapes" class="grapes-bg" />
+  <img src="images/strawberry.png" alt="Strawberry" class="strawberry-bg" />
+
 </body>
 </html>
