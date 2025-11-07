@@ -1,0 +1,213 @@
+/***** Main Content *****/
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.hero {
+  margin-top: 4.5rem;
+  text-align: center;
+  max-width: 800px;
+}
+
+.hero__title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0 0 2.2rem 0;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.hero__subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #222;
+  margin-bottom: 4.5rem;
+  margin-top: 0.5rem;
+}
+
+.features {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 rgba(86, 171, 47, 0.07);
+  padding: 1.5rem 1.1rem 1.1rem 1.1rem;
+  flex: 1 1 210px;
+  min-width: 210px;
+  max-width: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 1.5px solid rgba(168, 224, 99, 0.13);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 6px 24px 0 rgba(86, 171, 47, 0.13);
+}
+
+.feature-card__icon {
+  font-size: 2rem;
+  margin-bottom: 1.1rem;
+}
+
+.feature-card__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+
+.feature-card__desc {
+  font-size: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .features {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .feature-card {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.recipe-form {
+  background: rgba(255,255,255,0.97);
+  border-radius: 2.2rem;
+  box-shadow: 0 4px 32px 0 rgba(86, 171, 47, 0.10);
+  padding: 2rem 5.3rem 1.2rem 2.2rem;
+  max-width: 1300px;
+  width: 100%;
+  margin-left: calc((100% - 940px) / 2); /* aligns with .features max-width: 1100px */
+  margin-right: 0;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
+}
+
+.recipe-input {
+  border: none;
+  outline: none;
+  font-size: 1.25rem;
+  padding: 1.1rem 1rem;
+  border-radius: 1.5rem;
+  background: #f7faf7;
+  color: #222;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 1px 4px 0 rgba(86, 171, 47, 0.06);
+  width: 100%;
+  transition: box-shadow 0.2s;
+}
+
+.recipe-input:focus {
+  box-shadow: 0 2px 8px 0 rgba(86, 171, 47, 0.13);
+}
+
+.recipe-form__bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.tools-label {
+  color: #aaa;
+  font-size: 1rem;
+  margin-right: 0.3rem;
+}
+
+.tool-btn {
+  border: 2px solid #e0e0e0;
+  background: #f7faf7;
+  color: #56ab2f;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 2rem;
+  padding: 0.5rem 1.3rem;
+  margin-right: 0.2rem;
+  cursor: pointer;
+  transition: background 0.18s, border 0.18s, color 0.18s;
+  outline: none;
+}
+
+.tool-btn--active {
+  background: #f3f9e9;
+  border: 2px solid #a8e063;
+  color: #222;
+  box-shadow: 0 2px 8px 0 rgba(168, 224, 99, 0.10);
+}
+
+.tool-btn:hover {
+  background: #eafbe2;
+  border: 2px solid #a8e063;
+  color: #222;
+}
+
+.submit-btn {
+  margin-left: auto;
+  background: #b4ec51;
+  background: linear-gradient(90deg, #a8e063 0%, #56ab2f 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.6rem 2.1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(86, 171, 47, 0.10);
+  transition: background 0.78s, box-shadow 0.78s, transform 0.73s;
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(90deg, #56ab2f 0%, #a8e063 100%);
+  box-shadow: 0 4px 16px 0 rgba(86, 171, 47, 0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 700px) {
+  .recipe-form {
+    padding: 1.2rem 0.7rem 0.7rem 0.7rem;
+  }
+  .recipe-input {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+  .submit-btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .recipe-form {
+    margin-left: 1%;
+    width: 98%;
+    max-width: 100%;
+  }
+}
