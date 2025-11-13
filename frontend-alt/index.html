@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CulinaryAI - AI Recipe Generator</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="./https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <i class="fas fa-utensils"></i>
+                <span>CulinaryAI</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="title-line">Transform Your</span>
+                        <span class="title-line highlight">Ingredients</span>
+                        <span class="title-line">Into Magic</span>
+                    </h1>
+                    <p class="hero-description">
+                        Discover amazing recipes with our AI-powered culinary assistant. 
+                        Simply enter your available ingredients and let our intelligent system 
+                        create delicious, personalized recipes just for you.
+                    </p>
+                </div>
+                
+                <!-- Recipe Input Form -->
+                <div class="recipe-form-container">
+                    <form class="recipe-form" id="recipeForm">
+                        <div class="form-group">
+                            <label for="ingredients" class="form-label">
+                                <i class="fas fa-carrot"></i>
+                                What ingredients do you have?
+                            </label>
+                            <textarea 
+                                id="ingredients" 
+                                name="ingredients" 
+                                class="form-input"
+                                placeholder="Enter your ingredients (e.g., chicken, rice, tomatoes, onions...)"
+                                rows="4"
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cuisine" class="form-label">
+                                <i class="fas fa-globe"></i>
+                                Preferred Cuisine (Optional)
+                            </label>
+                            <select id="cuisine" name="cuisine" class="form-select">
+                                <option value="">Any Cuisine</option>
+                                <option value="italian">Italian</option>
+                                <option value="mexican">Mexican</option>
+                                <option value="indian">Indian</option>
+                                <option value="chinese">Chinese</option>
+                                <option value="mediterranean">Mediterranean</option>
+                                <option value="american">American</option>
+                                <option value="french">French</option>
+                                <option value="thai">Thai</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dietary" class="form-label">
+                                <i class="fas fa-heart"></i>
+                                Dietary Preferences (Optional)
+                            </label>
+                            <select id="dietary" name="dietary" class="form-select">
+                                <option value="">No Restrictions</option>
+                                <option value="vegetarian">Vegetarian</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="gluten-free">Gluten-Free</option>
+                                <option value="dairy-free">Dairy-Free</option>
+                                <option value="low-carb">Low-Carb</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <span class="btn-text">Generate Recipe</span>
+                            <i class="fas fa-magic btn-icon"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Floating Elements -->
+            <div class="floating-elements">
+                <div class="floating-item" data-speed="2">
+                    <i class="fas fa-pepper-hot"></i>
+                </div>
+                <div class="floating-item" data-speed="1.5">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="floating-item" data-speed="2.5">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="floating-item" data-speed="1.8">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="about">
+            <div class="container">
+                <h2 class="section-title">Why Choose CulinaryAI?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>AI-Powered</h3>
+                        <p>Advanced artificial intelligence creates unique recipes tailored to your ingredients and preferences.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Quick & Easy</h3>
+                        <p>Get delicious recipes in seconds. No more searching through countless cookbooks or websites.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Personalized</h3>
+                        <p>Recipes adapted to your dietary restrictions, skill level, and taste preferences.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CulinaryAI</h3>
+                    <p>Transforming ingredients into culinary masterpieces with the power of artificial intelligence.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-envelope"></i> hello@culinaryai.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Recipe Street, Food City</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CulinaryAI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Recipe Generation Page (Hidden by default) -->
+    <div class="recipe-page" id="recipePage">
+        <div class="recipe-page-content">
+            <div class="recipe-header">
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Generator
+                </button>
+                <h2>Your AI-Generated Recipe</h2>
+            </div>
+            <div class="recipe-content" id="recipeContent">
+                <!-- Recipe content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Crafting your perfect recipe...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
