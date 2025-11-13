@@ -1,36 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Recipify – Select UI Version</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipify – Choose UI Version</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
-    a {
-      padding: 12px 22px;
-      margin: 10px;
-      display: inline-block;
-      background: black;
-      color: white;
-      border-radius: 6px;
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(140deg, #0d0d0d, #1a1a1a, #141414);
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      margin-bottom: 2rem;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(0, 255, 200, 0.2);
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(15px);
+      padding: 35px 25px;
+      width: 280px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
       text-decoration: none;
-      font-size: 18px;
+      transition: all 0.3s ease;
+      color: white;
+
+      /* subtle glow */
+      box-shadow: 0 8px 20px rgba(0, 255, 200, 0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 35px rgba(0, 255, 200, 0.15);
+      border-color: rgba(0, 255, 200, 0.4);
+    }
+
+    .card h2 {
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+      color: #00ffc8;
+      text-shadow: 0 0 8px rgba(0, 255, 200, 0.4);
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      opacity: 0.85;
+      color: #e0e0e0;
     }
   </style>
 </head>
+
 <body>
 
-<h1>Recipify – Choose UI Version</h1>
+  <div class="container">
+    <h1>Select Recipify Interface</h1>
 
-<a href="frontend-main/">Main Frontend</a>
-<a href="frontend-alt/">Alternative Frontend</a>
+    <div class="cards">
+
+      <!-- Main UI -->
+      <a href="frontend-main/" class="card" target="_blank" rel="noopener">
+        <h2>Main UI</h2>
+        <p>The complete Recipify experience with all features.</p>
+      </a>
+
+      <!-- Alternative UI -->
+      <a href="frontend-alt/" class="card" target="_blank" rel="noopener">
+        <h2>Alternative UI</h2>
+        <p>An experimental design with a fresh approach.</p>
+      </a>
+
+    </div>
+  </div>
 
 </body>
 </html>
