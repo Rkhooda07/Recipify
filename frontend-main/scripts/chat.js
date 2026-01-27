@@ -23,9 +23,9 @@ async function generateRecipeFromGemini(ingredients) {
 function displayMessage(content, sender, isLoading = false) {
   const chatContainer = document.getElementById('chatMessages');
   const messageDiv = document.createElement('div');
-  
+
   messageDiv.className = `message ${sender}-message ${isLoading ? 'loading' : ''}`;
-  
+
   if (isLoading) {
     messageDiv.innerHTML = `
       <div class="loading-dots">
@@ -35,11 +35,15 @@ function displayMessage(content, sender, isLoading = false) {
     `;
     messageDiv.id = 'loading-message';
   } else {
-    messageDiv.innerHTML = formatRecipeContent(content);
+    // Wrap content in a scrollable container
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'message-content';
+    contentWrapper.innerHTML = formatRecipeContent(content);
+    messageDiv.appendChild(contentWrapper);
   }
-  
+
   chatContainer.appendChild(messageDiv);
-  
+
   // Smooth scroll to bottom with a small delay to ensure content is rendered
   setTimeout(() => {
     chatContainer.scrollTo({
@@ -51,11 +55,17 @@ function displayMessage(content, sender, isLoading = false) {
 
 // Format recipe content for better display
 function formatRecipeContent(content) {
-  return content
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>')
-    .replace(/$/, '</p>');
+  // Split by double newlines to get paragraphs
+  const paragraphs = content.split(/\n\n+/);
+
+  // Format each paragraph
+  const formattedParagraphs = paragraphs.map(para => {
+    // Replace single newlines with <br> within paragraphs
+    const formatted = para.trim().replace(/\n/g, '<br>');
+    return formatted ? `<p>${formatted}</p>` : '';
+  }).filter(p => p); // Remove empty paragraphs
+
+  return formattedParagraphs.join('');
 }
 
 // Remove loading message
@@ -71,20 +81,28 @@ async function handleRecipeGeneration(ingredients) {
   try {
     // Show loading message
     displayMessage('Let me think of a perfect recipe for you...', 'ai', true);
-    
+
     // Generate recipe from API
     const recipe = await generateRecipeFromGemini(ingredients);
-    
+
     // Remove loading message and show recipe
     removeLoadingMessage();
     displayMessage(recipe, 'ai');
-    
+
     // Save recipe to localStorage
     saveRecipeToLocalStorage(recipe, ingredients);
   } catch (error) {
     console.error('Recipe generation error:', error);
     removeLoadingMessage();
-    displayMessage('Sorry, there was an issue generating your recipe. Please try again.', 'ai');
+
+    // Check if it's an overload error
+    if (error.message.includes('overloaded') || error.message.includes('503')) {
+      displayMessage('🍳 The AI chef is a bit busy right now! The system is trying again automatically. If this persists, please wait a moment and try again.', 'ai');
+    } else if (error.message.includes('429')) {
+      displayMessage('⏰ Too many requests! Please wait a moment before trying again.', 'ai');
+    } else {
+      displayMessage('😔 Sorry, there was an issue generating your recipe. Please try again in a moment.', 'ai');
+    }
   }
 }
 
@@ -93,7 +111,7 @@ function saveRecipeToLocalStorage(recipe, ingredients) {
   try {
     // Get existing recipes from localStorage
     const existingRecipes = JSON.parse(localStorage.getItem('userRecipes') || '[]');
-    
+
     // Create new recipe object
     const newRecipe = {
       id: Date.now(),
@@ -103,18 +121,18 @@ function saveRecipeToLocalStorage(recipe, ingredients) {
       dateCreated: new Date().toISOString(),
       dateViewed: new Date().toISOString()
     };
-    
+
     // Add to beginning of array (most recent first)
     existingRecipes.unshift(newRecipe);
-    
+
     // Keep only the last 20 recipes to avoid localStorage limits
     if (existingRecipes.length > 20) {
       existingRecipes.splice(20);
     }
-    
+
     // Save back to localStorage
     localStorage.setItem('userRecipes', JSON.stringify(existingRecipes));
-    
+
     console.log('Recipe saved to localStorage:', newRecipe.name);
   } catch (error) {
     console.error('Error saving recipe to localStorage:', error);
@@ -127,8 +145,8 @@ function extractRecipeName(recipe) {
   const lines = recipe.split('\n');
   for (let i = 0; i < Math.min(lines.length, 5); i++) {
     const line = lines[i].trim();
-    if (line && !line.startsWith('#') && !line.toLowerCase().includes('ingredients') && 
-        !line.toLowerCase().includes('instructions') && !line.toLowerCase().includes('time')) {
+    if (line && !line.startsWith('#') && !line.toLowerCase().includes('ingredients') &&
+      !line.toLowerCase().includes('instructions') && !line.toLowerCase().includes('time')) {
       return line.replace(/^[0-9]+\.\s*/, '').replace(/^[-*]\s*/, '');
     }
   }
@@ -136,7 +154,7 @@ function extractRecipeName(recipe) {
 }
 
 // Initialize chat when page loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const storedIngredients = localStorage.getItem('userIngredients');
   const urlParams = new URLSearchParams(window.location.search);
   const paramIngredients = urlParams.get('ingredients');
@@ -161,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const chatForm = document.getElementById('chatForm');
   const chatInput = document.getElementById('chatInput');
   if (chatForm && chatInput) {
-    chatForm.addEventListener('submit', function(e) {
+    chatForm.addEventListener('submit', function (e) {
       e.preventDefault();
       const typed = (chatInput.value || '').trim();
       if (!typed) {

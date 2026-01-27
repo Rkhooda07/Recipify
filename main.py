@@ -18,8 +18,8 @@ app.add_middleware(
 load_dotenv("API-Key.env")  # Loads API-Key.env file
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# Use v1beta endpoint with widely available model
-API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+# Use v1beta endpoint with gemini-2.5-flash (currently available model)
+API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 # Debug: Print API key status (no sensitive data)
 print(f"API Key loaded: {'Yes' if GEMINI_API_KEY else 'No'}")
@@ -64,29 +64,61 @@ Format the response in a clear, easy-to-read structure. If some common kitchen s
         
         headers = {"Content-Type": "application/json"}
         
-        print(f"Calling Gemini API...")
-        try:
-            # Increase timeout to handle slower responses
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.post(
-                    f"{API_URL}?key={GEMINI_API_KEY}",
-                    json=request_body,
-                    headers=headers
-                )
-        except httpx.TimeoutException:
-            print("Gemini API request timed out")
-            raise HTTPException(status_code=500, detail="Gemini API request timed out")
-        except httpx.RequestError as e:
-            print(f"Network error calling Gemini API: {e}")
-            raise HTTPException(status_code=500, detail=f"Network error: {str(e)}")
+        # Retry logic with exponential backoff
+        max_retries = 3
+        retry_delay = 2  # Start with 2 seconds
         
-        print(f"Gemini API response status: {response.status_code}")
-        
-        if response.status_code != 200:
-            error_text = response.text
-            print(f"Gemini API error response: {error_text}")
-            # Surface upstream error message for debugging
-            raise HTTPException(status_code=500, detail=f"Gemini API error {response.status_code}: {error_text}")
+        for attempt in range(max_retries):
+            print(f"Calling Gemini API (attempt {attempt + 1}/{max_retries})...")
+            try:
+                # Increase timeout to handle slower responses
+                async with httpx.AsyncClient(timeout=60.0) as client:
+                    response = await client.post(
+                        f"{API_URL}?key={GEMINI_API_KEY}",
+                        json=request_body,
+                        headers=headers
+                    )
+                
+                print(f"Gemini API response status: {response.status_code}")
+                
+                # Check if we got a successful response
+                if response.status_code == 200:
+                    break
+                
+                # Handle rate limiting and overload errors with retry
+                if response.status_code in [429, 503]:
+                    error_text = response.text
+                    print(f"API overloaded (status {response.status_code}): {error_text}")
+                    
+                    if attempt < max_retries - 1:
+                        import asyncio
+                        wait_time = retry_delay * (2 ** attempt)  # Exponential backoff
+                        print(f"Retrying in {wait_time} seconds...")
+                        await asyncio.sleep(wait_time)
+                        continue
+                    else:
+                        raise HTTPException(
+                            status_code=503, 
+                            detail="The AI service is currently overloaded. Please try again in a few moments."
+                        )
+                
+                # For other errors, don't retry
+                error_text = response.text
+                print(f"Gemini API error response: {error_text}")
+                raise HTTPException(status_code=500, detail=f"Gemini API error {response.status_code}: {error_text}")
+                
+            except httpx.TimeoutException:
+                print("Gemini API request timed out")
+                if attempt < max_retries - 1:
+                    import asyncio
+                    wait_time = retry_delay * (2 ** attempt)
+                    print(f"Retrying in {wait_time} seconds...")
+                    await asyncio.sleep(wait_time)
+                    continue
+                raise HTTPException(status_code=500, detail="Gemini API request timed out after multiple attempts")
+            except httpx.RequestError as e:
+                print(f"Network error calling Gemini API: {e}")
+                raise HTTPException(status_code=500, detail=f"Network error: {str(e)}")
         
         data = response.json()
         print(f"Gemini API response structure: {list(data.keys())}")

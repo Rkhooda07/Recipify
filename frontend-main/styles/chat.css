@@ -62,20 +62,83 @@
   font-size: 1rem;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 /* Message styling improvements */
 .message {
   margin-bottom: 0.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.message.ai .bubble {
-  max-width: 85%;
-  line-height: 1.5;
+.message.ai-message {
+  align-items: flex-start;
 }
 
-.message.user .bubble {
+.message.user-message {
+  align-items: flex-end;
+}
+
+.message p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.message p:first-child {
+  margin-top: 0;
+}
+
+.message p:last-child {
+  margin-bottom: 0;
+}
+
+.message.user-message .bubble,
+.message.user-message {
+  background: #e0f7fa;
+  color: #222;
+  border-radius: 16px;
+  padding: 0.9rem 1.2rem;
   max-width: 70%;
+}
+
+.message.ai-message {
+  background: #fff3e0;
+  color: #222;
+  border-radius: 16px;
+  padding: 0.9rem 1.2rem;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message.ai-message .message-content {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+/* Custom scrollbar for AI message content */
+.message.ai-message .message-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message.ai-message .message-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+.message.ai-message .message-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 152, 0, 0.4);
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.message.ai-message .message-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 152, 0, 0.6);
 }
 
 /* Loading animation */
