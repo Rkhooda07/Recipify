@@ -1,7 +1,7 @@
 # Recipify
 
 AI recipe generator: type your ingredients, get a full recipe. FastAPI backend
-with a multi-provider AI fallback (Groq → NVIDIA NIM → Gemini) serving a static frontend.
+with a multi-provider AI fallback (Groq → Gemini → NVIDIA NIM) serving a static frontend.
 
 ## Prerequisites
 - Python 3.10+
@@ -15,7 +15,7 @@ with a multi-provider AI fallback (Groq → NVIDIA NIM → Gemini) serving a sta
    cp .env.example .env
    ```
    Fill in the keys you have. Providers are tried in order
-   (Groq → NVIDIA → Gemini); one key is enough.
+   (Groq → Gemini → NVIDIA); one key is enough.
 2. Create a virtual environment and install deps:
    ```
    python3 -m venv .venv

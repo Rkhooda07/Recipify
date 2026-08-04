@@ -10,13 +10,14 @@ load_dotenv()
 app = FastAPI()
 
 # ponytail: ordered fallback list is the retry strategy; one attempt per provider
+# NVIDIA last: its free tier queues requests (~60s+ latency), so it's the last resort
 PROVIDERS = [
     ("Groq", "https://api.groq.com/openai/v1/chat/completions",
      "GROQ_API_KEY", "llama-3.3-70b-versatile"),
-    ("NVIDIA", "https://integrate.api.nvidia.com/v1/chat/completions",
-     "NVIDIA_API_KEY", "meta/llama-3.3-70b-instruct"),
     ("Gemini", "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
      "GEMINI_API_KEY", "gemini-2.5-flash"),
+    ("NVIDIA", "https://integrate.api.nvidia.com/v1/chat/completions",
+     "NVIDIA_API_KEY", "meta/llama-3.1-8b-instruct"),
 ]
 
 
@@ -40,7 +41,7 @@ Please provide:
 Format the response in a clear, easy-to-read structure. If some common kitchen staples are needed (salt, pepper, oil), feel free to include them."""
 
     errors = []
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=150.0) as client:
         for name, url, key_var, model in PROVIDERS:
             key = os.getenv(key_var)
             if not key:
