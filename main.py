@@ -1,42 +1,32 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import httpx
 import os
 from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ponytail: ordered fallback list is the retry strategy; one attempt per provider
+PROVIDERS = [
+    ("Groq", "https://api.groq.com/openai/v1/chat/completions",
+     "GROQ_API_KEY", "llama-3.3-70b-versatile"),
+    ("NVIDIA", "https://integrate.api.nvidia.com/v1/chat/completions",
+     "NVIDIA_API_KEY", "meta/llama-3.3-70b-instruct"),
+    ("Gemini", "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+     "GEMINI_API_KEY", "gemini-2.5-flash"),
+]
 
-load_dotenv("API-Key.env")  # Loads API-Key.env file
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# Use v1beta endpoint with gemini-2.5-flash (currently available model)
-API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-
-# Debug: Print API key status (no sensitive data)
-print(f"API Key loaded: {'Yes' if GEMINI_API_KEY else 'No'}")
 
 class RecipeRequest(BaseModel):
     ingredients: str
 
+
 @app.post("/generate-recipe")
 async def generate_recipe(request: RecipeRequest):
-    try:
-        # Debug: Print received ingredients
-        print(f"Received ingredients: {request.ingredients}")
-        
-        if not GEMINI_API_KEY:
-            raise HTTPException(status_code=500, detail="Gemini API key not found")
-        
-        prompt = f"""You are a professional chef AI assistant. Create a detailed recipe using the following ingredients: {request.ingredients}.
+    prompt = f"""You are a professional chef AI assistant. Create a detailed recipe using the following ingredients: {request.ingredients}.
 
 Please provide:
 1. Recipe name
@@ -48,101 +38,48 @@ Please provide:
 7. Serving suggestions
 
 Format the response in a clear, easy-to-read structure. If some common kitchen staples are needed (salt, pepper, oil), feel free to include them."""
-        
-        request_body = {
-            "contents": [{
-                "role": "user",
-                "parts": [{"text": prompt}]
-            }],
-            "generationConfig": {
-                "temperature": 0.7,
-                "topK": 40,
-                "topP": 0.95,
-                "maxOutputTokens": 1024,
-            }
-        }
-        
-        headers = {"Content-Type": "application/json"}
-        
-        # Retry logic with exponential backoff
-        max_retries = 3
-        retry_delay = 2  # Start with 2 seconds
-        
-        for attempt in range(max_retries):
-            print(f"Calling Gemini API (attempt {attempt + 1}/{max_retries})...")
+
+    errors = []
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        for name, url, key_var, model in PROVIDERS:
+            key = os.getenv(key_var)
+            if not key:
+                errors.append(f"{name}: no API key set")
+                continue
             try:
-                # Increase timeout to handle slower responses
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    response = await client.post(
-                        f"{API_URL}?key={GEMINI_API_KEY}",
-                        json=request_body,
-                        headers=headers
-                    )
-                
-                print(f"Gemini API response status: {response.status_code}")
-                
-                # Check if we got a successful response
+                response = await client.post(
+                    url,
+                    headers={"Authorization": f"Bearer {key}"},
+                    json={
+                        "model": model,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.7,
+                        "max_tokens": 4096,
+                    },
+                )
                 if response.status_code == 200:
-                    break
-                
-                # Handle rate limiting and overload errors with retry
-                if response.status_code in [429, 503]:
-                    error_text = response.text
-                    print(f"API overloaded (status {response.status_code}): {error_text}")
-                    
-                    if attempt < max_retries - 1:
-                        import asyncio
-                        wait_time = retry_delay * (2 ** attempt)  # Exponential backoff
-                        print(f"Retrying in {wait_time} seconds...")
-                        await asyncio.sleep(wait_time)
-                        continue
-                    else:
-                        raise HTTPException(
-                            status_code=503, 
-                            detail="The AI service is currently overloaded. Please try again in a few moments."
-                        )
-                
-                # For other errors, don't retry
-                error_text = response.text
-                print(f"Gemini API error response: {error_text}")
-                raise HTTPException(status_code=500, detail=f"Gemini API error {response.status_code}: {error_text}")
-                
-            except httpx.TimeoutException:
-                print("Gemini API request timed out")
-                if attempt < max_retries - 1:
-                    import asyncio
-                    wait_time = retry_delay * (2 ** attempt)
-                    print(f"Retrying in {wait_time} seconds...")
-                    await asyncio.sleep(wait_time)
-                    continue
-                raise HTTPException(status_code=500, detail="Gemini API request timed out after multiple attempts")
-            except httpx.RequestError as e:
-                print(f"Network error calling Gemini API: {e}")
-                raise HTTPException(status_code=500, detail=f"Network error: {str(e)}")
-        
-        data = response.json()
-        print(f"Gemini API response structure: {list(data.keys())}")
-        
-        try:
-            recipe_text = data["candidates"][0]["content"]["parts"][0]["text"]
-            print(f"Recipe generated successfully, length: {len(recipe_text)}")
-            return {"recipe": recipe_text}
-        except (KeyError, IndexError) as e:
-            print(f"Error parsing Gemini response: {e}")
-            print(f"Response data: {data}")
-            raise HTTPException(status_code=500, detail="Invalid response structure from Gemini API")
-            
-    except Exception as e:
-        print(f"Unexpected error: {str(e)}")
-        print(f"Error type: {type(e)}")
-        import traceback
-        print(f"Full traceback: {traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+                    recipe = response.json()["choices"][0]["message"]["content"]
+                    print(f"Recipe generated by {name}, length: {len(recipe)}")
+                    return {"recipe": recipe, "provider": name}
+                errors.append(f"{name}: HTTP {response.status_code}")
+                print(f"{name} failed ({response.status_code}): {response.text[:200]}")
+            except (httpx.HTTPError, KeyError, IndexError) as e:
+                errors.append(f"{name}: {type(e).__name__}")
+                print(f"{name} failed: {e!r}")
+
+    raise HTTPException(
+        status_code=503,
+        detail="All AI providers unavailable: " + "; ".join(errors),
+    )
 
 
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+
+# Must come after the API routes — catch-all static mount
+app.mount("/", StaticFiles(directory="frontend-main", html=True), name="frontend")
 
 
 if __name__ == "__main__":
