@@ -9,6 +9,7 @@
   flex-direction: column;
   height: 70vh;
   max-height: 600px;
+  animation: fade-up 0.4s ease-out backwards;
 }
 .chat-messages {
   flex: 1;
@@ -189,10 +190,29 @@
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 .chat-send-btn:hover {
   background: #ffa726;
+}
+.chat-send-btn:active {
+  transform: scale(0.96);
+}
+
+/* Formatted recipe output */
+.message-content h3 {
+  margin: 0.8rem 0 0.3rem;
+  font-size: 1.05rem;
+  color: #56ab2f;
+}
+.message-content ul,
+.message-content ol {
+  margin: 0.3rem 0 0.6rem;
+  padding-left: 1.3rem;
+}
+.message-content li {
+  margin: 0.2rem 0;
+  line-height: 1.5;
 }
 
 /* Responsive design for mobile */

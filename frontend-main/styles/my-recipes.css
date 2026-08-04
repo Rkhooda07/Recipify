@@ -198,6 +198,21 @@
   margin-bottom: 1rem;
 }
 
+.recipe-content h3 {
+  margin: 1rem 0 0.4rem;
+  color: #56ab2f;
+}
+
+.recipe-content ul,
+.recipe-content ol {
+  margin: 0.3rem 0 0.8rem;
+  padding-left: 1.3rem;
+}
+
+.recipe-content li {
+  margin: 0.2rem 0;
+}
+
 .modal-footer {
   padding: 1.5rem 2rem;
   border-top: 1px solid #eee;

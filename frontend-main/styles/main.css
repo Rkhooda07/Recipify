@@ -13,6 +13,7 @@
   margin-top: 4.5rem;
   text-align: center;
   max-width: 800px;
+  animation: fade-up 0.5s ease-out backwards;
 }
 
 .hero__title {
@@ -55,7 +56,11 @@
   align-items: center;
   transition: transform 0.18s, box-shadow 0.18s;
   border: 1.5px solid rgba(168, 224, 99, 0.13);
+  animation: fade-up 0.5s ease-out backwards;
 }
+
+.feature-card:nth-child(2) { animation-delay: 0.12s; }
+.feature-card:nth-child(3) { animation-delay: 0.24s; }
 
 .feature-card:hover {
   transform: translateY(-6px) scale(1.03);
@@ -178,7 +183,7 @@
   padding: 0.6rem 2.1rem;
   cursor: pointer;
   box-shadow: 0 2px 8px 0 rgba(86, 171, 47, 0.10);
-  transition: background 0.78s, box-shadow 0.78s, transform 0.73s;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
   outline: none;
   display: flex;
   align-items: center;
@@ -188,6 +193,23 @@
   background: linear-gradient(90deg, #56ab2f 0%, #a8e063 100%);
   box-shadow: 0 4px 16px 0 rgba(86, 171, 47, 0.18);
   transform: translateY(-2px) scale(1.04);
+}
+
+.submit-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.submit-btn:focus-visible,
+.chat-send-btn:focus-visible {
+  outline: 3px solid #56ab2f;
+  outline-offset: 2px;
+}
+
+.submit-btn:disabled,
+.chat-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 @media (max-width: 700px) {

@@ -1,9 +1,7 @@
-// API Configuration (frontend now calls local backend to avoid exposing keys)
-console.log('[Recipify] chat.js loaded (backend mode)');
-const BACKEND_URL = 'http://127.0.0.1:8000/generate-recipe';
+// Same-origin backend (frontend is served by FastAPI)
+const BACKEND_URL = '/generate-recipe';
 
-// Main function now calls the local FastAPI backend
-async function generateRecipeFromGemini(ingredients) {
+async function generateRecipe(ingredients) {
   const response = await fetch(BACKEND_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -12,7 +10,9 @@ async function generateRecipeFromGemini(ingredients) {
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`Backend error: ${response.status} ${response.statusText} - ${errText}`);
+    const err = new Error(`Backend error: ${response.status} - ${errText}`);
+    err.status = response.status;
+    throw err;
   }
 
   const data = await response.json();
@@ -53,21 +53,6 @@ function displayMessage(content, sender, isLoading = false) {
   }, 100);
 }
 
-// Format recipe content for better display
-function formatRecipeContent(content) {
-  // Split by double newlines to get paragraphs
-  const paragraphs = content.split(/\n\n+/);
-
-  // Format each paragraph
-  const formattedParagraphs = paragraphs.map(para => {
-    // Replace single newlines with <br> within paragraphs
-    const formatted = para.trim().replace(/\n/g, '<br>');
-    return formatted ? `<p>${formatted}</p>` : '';
-  }).filter(p => p); // Remove empty paragraphs
-
-  return formattedParagraphs.join('');
-}
-
 // Remove loading message
 function removeLoadingMessage() {
   const loadingMessage = document.getElementById('loading-message');
@@ -78,12 +63,13 @@ function removeLoadingMessage() {
 
 // Handle recipe generation with error handling
 async function handleRecipeGeneration(ingredients) {
+  const sendBtn = document.querySelector('.chat-send-btn');
+  if (sendBtn) sendBtn.disabled = true;
   try {
     // Show loading message
     displayMessage('Let me think of a perfect recipe for you...', 'ai', true);
 
-    // Generate recipe from API
-    const recipe = await generateRecipeFromGemini(ingredients);
+    const recipe = await generateRecipe(ingredients);
 
     // Remove loading message and show recipe
     removeLoadingMessage();
@@ -95,14 +81,15 @@ async function handleRecipeGeneration(ingredients) {
     console.error('Recipe generation error:', error);
     removeLoadingMessage();
 
-    // Check if it's an overload error
-    if (error.message.includes('overloaded') || error.message.includes('503')) {
-      displayMessage('🍳 The AI chef is a bit busy right now! The system is trying again automatically. If this persists, please wait a moment and try again.', 'ai');
-    } else if (error.message.includes('429')) {
-      displayMessage('⏰ Too many requests! Please wait a moment before trying again.', 'ai');
+    if (error.status === 503) {
+      displayMessage('🍳 The AI chefs are all busy right now! Please wait a moment and try again.', 'ai');
+    } else if (error.status === undefined) {
+      displayMessage('😔 Can\'t reach the kitchen — check your connection and try again.', 'ai');
     } else {
       displayMessage('😔 Sorry, there was an issue generating your recipe. Please try again in a moment.', 'ai');
     }
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
   }
 }
 

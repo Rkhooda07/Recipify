@@ -140,22 +140,6 @@ function updateRecipeViewDate(recipeId) {
   }
 }
 
-// Format recipe content for display
-function formatRecipeContent(content) {
-  return content
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>')
-    .replace(/$/, '</p>');
-}
-
-// Escape HTML to prevent XSS
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
 // Display error message
 function displayError(message) {
   const historyCardsContainer = document.querySelector('.history-cards');

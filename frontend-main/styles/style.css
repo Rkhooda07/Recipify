@@ -194,6 +194,34 @@ body {
   }
 }
 
+/* Floating fruit — animate `translate`, not transform (base rotate() lives in transform) */
+@keyframes fruit-float {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -14px; }
+}
+
+.pear-bg, .apple-bg, .grapes-bg, .strawberry-bg {
+  animation: fruit-float 7s ease-in-out infinite;
+}
+.apple-bg      { animation-duration: 9s;   animation-delay: -2s; }
+.grapes-bg     { animation-duration: 5.5s; animation-delay: -1s; }
+.strawberry-bg { animation-duration: 8s;   animation-delay: -3.5s; }
+
+/* Page entrance */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .footer {
   background: #181818;
   color: #eaeaea;
