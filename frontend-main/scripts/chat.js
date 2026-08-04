@@ -134,7 +134,11 @@ function extractRecipeName(recipe) {
     const line = lines[i].trim();
     if (line && !line.startsWith('#') && !line.toLowerCase().includes('ingredients') &&
       !line.toLowerCase().includes('instructions') && !line.toLowerCase().includes('time')) {
-      return line.replace(/^[0-9]+\.\s*/, '').replace(/^[-*]\s*/, '');
+      return line
+        .replace(/\*/g, '')
+        .replace(/^[0-9]+\.\s*/, '')
+        .replace(/^-\s*/, '')
+        .replace(/^recipe(\s+name)?:\s*/i, '');
     }
   }
   return 'Generated Recipe';

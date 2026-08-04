@@ -22,7 +22,7 @@ function formatRecipeContent(content) {
   for (const raw of lines) {
     const line = raw.trim().replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     let m;
-    if (!line) {
+    if (!line || /^[=_-]{3,}$/.test(line)) {
       closeList();
     } else if ((m = line.match(/^#{1,6}\s+(.*)/))) {
       closeList();
