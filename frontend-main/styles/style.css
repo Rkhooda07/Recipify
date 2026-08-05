@@ -2,6 +2,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* No horizontal scroll (fruits hang off-screen) + hide scrollbars */
+html, body {
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -21,6 +30,11 @@ body {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(6px);
+  animation: header-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes header-in {
+  from { opacity: 0; transform: translateY(-100%); }
 }
 
 .header__container {
@@ -78,27 +92,6 @@ body {
 
 .header__link:hover::after {
   width: 100%;
-}
-
-.header__signin {
-  display: flex;
-  align-items: center;
-}
-
-.header__signin-btn {
-  text-decoration: none;
-  color: #222;
-  font-size: 1rem;
-  font-weight: 400;
-  padding: 0.4rem 1.2rem;
-  border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
-}
-
-.header__signin-btn:hover {
-  background: #222;
-  color: #fff;
-  border-color: #222;
 }
 
 /* Image styling */
@@ -194,23 +187,30 @@ body {
   }
 }
 
-/* Floating fruit — animate `translate`, not transform (base rotate() lives in transform) */
+/* Floating fruit — animate `translate`/`scale`, not transform (base rotate() lives in transform) */
 @keyframes fruit-float {
   0%, 100% { translate: 0 0; }
   50%      { translate: 0 -14px; }
 }
 
-.pear-bg, .apple-bg, .grapes-bg, .strawberry-bg {
-  animation: fruit-float 7s ease-in-out infinite;
+/* Entrance: pop in with overshoot, then settle into the float */
+@keyframes fruit-in {
+  from { opacity: 0; scale: 0.4; }
 }
-.apple-bg      { animation-duration: 9s;   animation-delay: -2s; }
-.grapes-bg     { animation-duration: 5.5s; animation-delay: -1s; }
-.strawberry-bg { animation-duration: 8s;   animation-delay: -3.5s; }
+
+.pear-bg, .apple-bg, .grapes-bg, .strawberry-bg {
+  animation: fruit-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) backwards,
+             fruit-float 7s ease-in-out infinite;
+}
+.pear-bg       { animation-delay: 0.55s, 0s; }
+.apple-bg      { animation-delay: 0.7s, -2s;    animation-duration: 0.9s, 9s; }
+.grapes-bg     { animation-delay: 0.85s, -1s;   animation-duration: 0.9s, 5.5s; }
+.strawberry-bg { animation-delay: 1s, -3.5s;    animation-duration: 0.9s, 8s; }
 
 /* Page entrance */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
