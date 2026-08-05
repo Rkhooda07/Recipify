@@ -1,5 +1,5 @@
 // Same-origin backend (frontend is served by FastAPI)
-const BACKEND_URL = '/generate-recipe';
+const BACKEND_URL = '/api/generate-recipe';
 
 async function generateRecipe(ingredients) {
   const response = await fetch(BACKEND_URL, {
